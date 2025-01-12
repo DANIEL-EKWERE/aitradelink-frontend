@@ -1,0 +1,27 @@
+@font-face {
+	font-family: "LiveChat Icons";
+	src: url("../fonts/livechat-icons.eot");
+	src: url("../fonts/livechat-icons.eot") format("embedded-opentype"), url("../fonts/livechat-icons.woff") format("woff2"), url("../fonts/livechat-icons.woff") format("woff"), url("../fonts/livechat-icons.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+}
+.lc:before, .lc-set {
+	display: inline-block;
+	font: normal normal normal 24px/1 "LiveChat Icons";
+	font-size: inherit;
+	text-rendering: auto;
+	line-height: inherit;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.lc-contact-button::before {
+	content: "\e900"
+}
+
+.lc-livechat::before {
+	content: "\e901"
+}
+.lc-quality-badge::before {
+	content: "\e902"
+}

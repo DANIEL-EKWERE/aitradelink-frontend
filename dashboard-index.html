@@ -1,0 +1,965 @@
+<html lang="en">
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="shortcut icon" type="image/png" href="./asset/theme4/images/icon/icon.png">
+    <title>
+        aitradelink
+        Dashboard
+    </title>
+    <link href="./asset/theme4/frontend/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="./styles/bootstrap.min.css" rel="stylesheet">
+    <link href="./styles/bootstrap-icons.css" rel="stylesheet">
+    <link href="./styles/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/slick.css">
+    <link href="./styles/glightbox.min.css" rel="stylesheet">
+    <link href="./styles/remixicon.css" rel="stylesheet">
+    <link href="./styles/swiper-bundle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/selectric.css">
+    <link rel="stylesheet" href="./styles/animate.min.css">
+    <link rel="stylesheet" href="./styles/font-awsome.min.css">
+    <link rel="stylesheet" href="./styles/iziToast.min.css">
+    <link href="./styles/style.css" rel="stylesheet">
+
+    <script src="./scripts/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="./styles/style.css">
+
+
+</head>
+
+<body cz-shortcut-listen="true">
+
+    <!-- ======= Header ======= -->
+
+
+
+    <!-- End Header -->
+
+    <main id="main" class="dashboard-main">
+        <section class="dashboard-section">
+
+
+
+
+
+            <!-- mobile bottom menu start -->
+            <div class="mobile-bottom-menu-wrapper" style="background:#f8f9f9">
+                <ul class="mobile-bottom-menu">
+                    <li>
+                        <a href="./dashboard-index.html" class="active">
+                            <i class="bi bi-house-door"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <!--<li>-->
+                    <!--  <a href="./deposit" class="">-->
+                    <!--    <i class="bi bi-wallet2"></i>-->
+                    <!--    <span>Deposit</span>-->
+                    <!--  </a>-->
+                    <!--</li>-->
+                    <li>
+                        <a href="./dashboard-log-my-trade.html">
+                            <i class="bi bi-piggy-bank"></i>
+                            <span>My trade</span>
+                        </a>
+                    </li>
+
+                    <!--<li>-->
+                    <!--  <a href="./withdraw" class="">-->
+                    <!--    <i class="bi bi-cash-coin"></i>-->
+                    <!--    <span>Withdraw</span>-->
+                    <!--  </a>-->
+                    <!--</li>-->
+                    <li>
+                        <a href="./dashboard-transfer-money.html">
+                            <i class="bi bi-shuffle"></i>
+                            <span>Transfer</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./market.html">
+                            <i class="bi bi-cash-coin"></i>
+                            <span>Market</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+
+            <!-- mobile bottom menu end -->
+            <script src="/widgets/js/script"></script>
+            <script src="/npm/sweetalert2@11"></script>
+            <script>
+                // Mail Functions
+                function showMail(mailContent, subject, mailId) {
+                    return Swal.fire({
+                        title: subject,
+                        html: mailContent,
+                        iconHtml: '<i class="fas fa-envelope-open-text"></i>',
+                        icon: null,
+                        allowOutsideClick: false,
+                        showConfirmButton: true,
+                        confirmButtonText: 'Ok',
+                        confirmButtonColor: '#0090e4',
+                        customClass: {
+                            popup: 'custom-popup',
+                        },
+                    }).then((result) => {
+                        if (result.value) {
+                            // Make an AJAX request to update the mail status
+                            $.ajax({
+                                type: 'POST',
+                                url: './update-mail-status',
+                                data: {
+                                    _token: '9uDk52mEjkGS5MbvLjwyEmAjhYxiJui7A8kreu2S', // Include the CSRF token
+                                    mailId: mailId
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        console.log('Mail status updated successfully');
+                                    } else {
+                                        console.error('Failed to update mail status');
+                                    }
+                                },
+                                error: function (error) {
+                                    console.error('AJAX request failed:', error);
+                                },
+                            });
+                        }
+                    });
+                }
+
+                // Fetch mail data from your controller
+                const mailData = [];
+
+                // Show each mail sequentially
+                function showAllMails(index) {
+                    if (index < mailData.length) {
+                        showMail(mailData[index].body, mailData[index].subject, mailData[index].id)
+                            .then(() => showAllMails(index + 1));
+                    }
+                }
+                showAllMails(0);
+
+
+                // Terms Functions
+                function showUserTerms(mailContent, mailId) {
+                    return Swal.fire({
+                        title: 'Terms and Condition',
+                        html: mailContent,
+                        iconHtml: '<i class="fa fa-thumbs-up" aria-hidden="true"></i>',
+                        icon: null,
+                        allowOutsideClick: false,
+                        showConfirmButton: true,
+                        confirmButtonText: 'Accept',
+                        confirmButtonColor: '#0090e4',
+                        customClass: {
+                            popup: 'custom-popup',
+                        },
+                    }).then((result) => {
+                        if (result.value) {
+                            // Make an AJAX request to update the mail status
+                            $.ajax({
+                                type: 'POST',
+                                url: './update-mail-terms',
+                                data: {
+                                    _token: '9uDk52mEjkGS5MbvLjwyEmAjhYxiJui7A8kreu2S', // Include the CSRF token
+                                    mailId: mailId
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        console.log('Mail status updated successfully');
+                                    } else {
+                                        console.error('Failed to update mail status');
+                                    }
+                                },
+                                error: function (error) {
+                                    console.error('AJAX request failed:', error);
+                                },
+                            });
+                        }
+                    });
+                }
+                const terms = "<div style=\"height: 400px;\" class=\"elementor-widget-container\">\n\t\t\t<style>\/*! elementor - v3.15.0 - 20-08-2023 *\/\n.elementor-widget-text-editor.elementor-drop-cap-view-stacked .elementor-drop-cap{background-color:#69727d;color:#fff}.elementor-widget-text-editor.elementor-drop-cap-view-framed .elementor-drop-cap{color:#69727d;border:3px solid;background-color:transparent}.elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap{margin-top:8px}.elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap-letter{width:1em;height:1em}.elementor-widget-text-editor .elementor-drop-cap{float:left;text-align:center;line-height:1;font-size:50px}.elementor-widget-text-editor .elementor-drop-cap-letter{display:inline-block}<\/style>\t\t\t\t<p>Updated Date: 03-01-2024<\/p><p><strong>1.0 Introduction<\/strong><\/p><p>Welcome to Def-cryptoinv.com! These Terms of Use govern your access and use of our crypto trading and investment platform. By accessing or using Def-cryptoinv.com, you agree to be bound by these Terms, as well as our Privacy Policy. If you do not agree with these Terms, please refrain from using our platform.<\/p><p><strong>2.0 Eligibility<\/strong><\/p><p>2.1. Age Requirement: You must be at least 18 years old to use Def-cryptoinv.com. By accessing and using our platform, you affirm that you are of legal age to enter into this agreement.<\/p><p>2.2. Prohibited Jurisdictions: Some jurisdictions may have restrictions on the use of cryptocurrency trading platforms. It is your responsibility to ensure compliance with your local laws and regulations before using Def-cryptoinv.com.<\/p><p><strong>3.0 Account Registration<\/strong><\/p><p>3.1. Account Creation: To access certain features of our platform, you must register for an account. You agree to provide accurate, complete, and up-to-date information during the registration process.<\/p><p>3.2. Account Security: You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. Notify us immediately if you suspect any unauthorized use of your account.<\/p><p><strong>4.0 Platform Usage<\/strong><\/p><p>4.1. Prohibited Activities: You agree not to use Def-cryptoinv.com for any illegal, unauthorized, or prohibited activities. This includes, but is not limited to, money laundering, fraud, hacking, spreading malware, or engaging in any activity that could harm the platform or its users.<\/p><p>4.3. User Conduct: You must conduct yourself in a respectful and lawful manner while using our platform. Harassment, spamming, impersonation, or any other abusive behavior towards other users or Def-cryptoinv.com staff is strictly prohibited.<\/p><p><strong>5.0 Platform&nbsp; Communication<\/strong><\/p><p>We appreciate your interest and enthusiasm in our crypto investment company. As we strive to maintain efficiency and productivity in our operations, we kindly request that all communication with our brokers be conducted via text messages (messenger preferably) rather than phone calls.<\/p><p>This measure ensures proper documentation of conversations and allows our brokers to focus on their tasks without distraction. Below are four reasons why we encourage this mode of communication:<\/p><p>5.1. Efficiency: Text messages (messenger preferably) allow for quick and concise communication, enabling our brokers to address inquiries promptly and efficiently.<\/p><p>5.2. Documentation: Text message (messenger preferably) exchanges provide a clear record of conversations, ensuring accuracy and transparency in all communications between investors and brokers.<\/p><p>5.3. Productivity: Minimizing phone calls reduces interruptions and allows our brokers to dedicate more time to researching, analyzing, and managing investments on behalf of our clients.<\/p><p>5.4. Security: Written communication via text messages offers a secure and encrypted channel for sharing sensitive information, maintaining confidentiality and protecting the interests of our clients.<\/p><p>-Kindly note that before achieving full verification status, brokers undergo a procedural step involving the acceptance of broker terms of use, with the stipulation not to contact investors through phone calls.<\/p><p>-Additionally, the brokerage firm presently and will have the power to monitor communications between brokers and investors to ensure operational efficiency.<\/p><p>-Moreso, while monitoring telephone conversations between investors and brokers poses challenges, monitoring text-based interactions remains feasible and straightforward.<\/p><p>-We have also prohibited physical meetings between brokers and investors as our company will not be liable for whatever outcome during the meeting. To further reiterate, we only keep strict records of text messages (messenger preferably) between brokers and investors. This is to enable efficient customer service whenever the need arises.<\/p><p>Furthermore, a broker who fails to adhere to the above terms listed by our company will be sanctioned appropriately. Failure to comply with the terms may lead to the forfeiture of the broker\u2019s trading license.<\/p><p>-We appreciate your cooperation in adhering to this communication protocol. Should you have any further inquiries or require assistance, please do not hesitate to reach out to us via Customer support live chat. Thank you for your understanding and continued support.<\/p><p><strong>6.Fees and Payments<\/strong><\/p><p>6.1. Fee Structure: Certain features and services on Def-cryptoinv.com may incur fees. The applicable fees and payment terms will be clearly disclosed on our platform. By using such services, you agree to pay the specified fees.<\/p><p>6.2. Payment Authorization: By providing payment information, you authorize us or our third-party payment processors to charge the applicable fees to your chosen payment method.<\/p><p><strong>7.0 Intellectual Property<\/strong><\/p><p>7.1. Ownership: All content, logos, trademarks, and other materials on Def-cryptoinv.com are the exclusive property of Def-cryptoinv.com or its licensors. You are not granted any license or right to use these materials without our prior written consent.<\/p><p>7.2. User Content: By posting, uploading, or submitting any content on our platform, you grant Def-cryptoinv.com a non-exclusive, royalty-free, worldwide license to use, reproduce, display, and distribute such content for platform-related purposes.<\/p><p><strong>8.0 Termination<\/strong><\/p><p>8.1. Termination by User: You can terminate your account at any time by following the instructions on our platform. Upon termination, any outstanding fees and obligations will remain due.<\/p><p>8.2. Termination by Def-cryptoinv.com: We reserve the right to suspend or terminate your access to our platform, with or without cause, at our sole discretion.<\/p><p><strong>9.0 Limitation of Liability<\/strong><\/p><p>9.1. Disclaimer of Warranties: Def-cryptoinv.com provides its services \u201cas is\u201d and \u201cas available,\u201d without any warranties or representations, express or implied. We do not guarantee the accuracy, reliability, or completeness of any content or information on our platform.<\/p><p>9.2. Limitation of Liability: In no event shall Def-cryptoinv.com or its affiliates be liable for any indirect, consequential, special, or punitive damages arising out of or relating to your use of our platform.<\/p><p><strong>10.0 Amendments<\/strong><\/p><p>10.1. Changes to the Terms: We may update or modify these Terms at any time to reflect changes in our services, legal requirements, or other operational reasons. We will notify you of any material changes through our platform or by email.<\/p><p><strong>11. Governing Law<\/strong><\/p><p>These Terms are governed by and construed in accordance with the laws of [Jurisdiction], without regard to its conflicts of law principles.<\/p><p><strong>12. Contact Us<\/strong><\/p><p>If you have any questions, concerns, or requests regarding these Terms or the use of Def-cryptoinv.com, please contact us at info@def-cryptoinv.com<\/p><p>By using Def-cryptoinv.com, you acknowledge that you have read, understood, and agreed to these Terms of Service.<\/p>\t\t\t\t\t\t<\/div> ";
+                function showTerms() {
+                    if (1 == 0) {
+                        showUserTerms(terms, 229)
+                    }
+                }
+
+                // Start showing mails
+
+                showTerms();
+                // if ( == 1 &&  != 1) {
+                //     Swal.fire({
+                //         title: "Ethereum Crypto Signal",
+                //         text: "Discover a game-changing trading opportunity that would unlock unprecedented rewards! Exploit this exclusive crypto signal that offers a groundbreaking opportunity for massive gains. Don't miss out on this!",
+                //         icon: "success",
+                //         confirmButtonText: "Enable",
+                //         allowOutsideClick: false,
+                //         showConfirmButton: true,
+                //         confirmButtonColor: '#0090e4',
+                //     }).then((result) => {
+                //         if (result.value) {
+                //             window.location ="./eth_plan"
+                //         }
+                //     });
+                // }
+
+            </script>
+            <style>
+                /*.custom-popup .swal2-popup {*/
+                /*    height: 80% !important;*/
+                /*}*/
+                .custom-popup {
+                    width: 90% !important;
+                    max-width: none !important;
+                    overflow-y: auto !important;
+                    /*height:90% !important;*/
+                }
+
+                .swal2-container {
+                    z-index: 9999999999;
+                }
+
+                div:where(.swal2-container) h2:where(.swal2-title) {
+                    padding: 0 !important;
+                }
+
+                div:where(.swal2-icon) {
+                    margin: 0.5em auto 0.6em;
+                    ;
+                }
+
+                div:where(.swal2-container) .swal2-html-container {
+                    text-align: left !important;
+                    margin: 0.5em;
+                }
+
+                div:where(.swal2-container) div:where(.swal2-actions) {
+                    margin: 0 !important;
+                }
+
+                .wrap_cc7a {
+                    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+                    bottom: 40% !important;
+                    display: block;
+                    opacity: 1;
+                    position: fixed;
+                    transition: opacity .1s;
+                    visibility: visible;
+                    z-index: 2147483647;
+                }
+            </style>
+            <style>
+                /* Custom styling for each column */
+                .cover {
+                    position: absolute;
+                    top: 570px;
+                    left: 0;
+                    width: 100%;
+                    height: 180px;
+                    background-color: transparent;
+                    opacity: 0.5;
+                    z-index: 1;
+                }
+
+                .active-dot {
+                    width: 10px;
+                    height: 10px;
+                    display: inline-block;
+                    margin-left: 5px;
+                    background-color: green;
+                    border-radius: 50%;
+                }
+
+                .tradingview-widget-container {
+                    position: relative;
+                    /* Set the container as the reference for positioning */
+                    z-index: 0;
+                    /* Keep the widget below the cover */
+                }
+
+                .custom-column {
+                    padding: 5px;
+                    text-align: center;
+                    color: white;
+                    font-size: 18px;
+                    border-radius: 10px;
+                    margin: 2px;
+                }
+
+                .balance-bg,
+                .withdraw-bg,
+                .deposit-bg {
+                    background-color: #fff;
+                    box-shadow: 1px 1px 2px 1px #e1d7e1;
+                    border: 1px solid rgba(0, 0, 0, .125);
+                    color: black;
+                    padding: 10px !important;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                /* Centered icon */
+                .centered-icon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .icon {
+                    font-size: 25px;
+                    color: #0093e4;
+                }
+
+                .cryptoboxes {
+                    height: 143vh;
+                }
+
+                .col-10 {
+                    display: flex;
+                    flex-direction: column;
+                    text-align: start;
+                    padding-left: 25px;
+                }
+
+                .alert {
+                    margin-bottom: 0px !important;
+                }
+
+                ._orientationRight_ee1e.wrap_bfe9 {
+                    right: 0 !important;
+                    position: fixed !important;
+                    top: 55% !important;
+                }
+            </style>
+
+            <div class="dashboard-body-part" style="background:#f8f9f9; ">
+
+                <!--<h5>Hi, d3v</h5>-->
+                <div class="row gy-4" style="padding:5px">
+
+
+
+
+                    <div class="row g-sm-4 g-3 justify-content-between" style="margin-top:0px;padding-left: 0px">
+
+                        <div class="col-lg-9 col-md-12 d-none d-lg-block">
+                            <div class="row m-2">
+                                <div class="col-lg-9 w-100">
+                                    <!-- TradingView Widget BEGIN -->
+                                    <div class="tradingview-widget-container" style="width:100%">
+                                        <div id="tradingview_48ea6" style="height:143vh">
+                                            <div id="tradingview_39b94-wrapper"
+                                                style="position: relative; box-sizing: content-box; font-family: -apple-system, BlinkMacSystemFont, &quot;Trebuchet MS&quot; Roboto, Ubuntu, sans-serif; margin: 0px auto !important; padding: 0px !important; width: 100%; height: 100%;">
+                                                <iframe title="advanced chart TradingView widget" lang="en"
+                                                    id="tradingview_39b94" frameborder="0" allowtransparency="true"
+                                                    scrolling="no" allowfullscreen="true"
+                                                    src="https://s.tradingview.com/widgetembed/?hideideas=1&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en#%7B%22symbol%22%3A%22BITSTAMP%3ABTCUSD%22%2C%22frameElementId%22%3A%22tradingview_39b94%22%2C%22interval%22%3A%22D%22%2C%22allow_symbol_change%22%3A%221%22%2C%22save_image%22%3A%220%22%2C%22details%22%3A%221%22%2C%22studies%22%3A%22%5B%5D%22%2C%22theme%22%3A%22light%22%2C%22style%22%3A%221%22%2C%22timezone%22%3A%22Africa%2FLagos%22%2C%22studies_overrides%22%3A%22%7B%7D%22%2C%22utm_source%22%3A%22app.def-trademarket.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22chart%22%2C%22utm_term%22%3A%22BITSTAMP%3ABTCUSD%22%2C%22page-uri%22%3A%22app.def-trademarket.com%2Fdashboard%2Findex.php%22%7D"
+                                                    style="width: 100%; height: 100%; margin: 0px !important; padding: 0px !important;"></iframe>
+                                            </div>
+                                        </div>
+                                        <script type="text/javascript" src="./scripts/tv.js"></script>
+                                        <script type="text/javascript">
+                                            new TradingView.widget({
+                                                "autosize": true,
+                                                "symbol": "BITSTAMP:BTCUSD",
+                                                "interval": "D",
+                                                "timezone": "Africa/Lagos",
+                                                "theme": "light",
+                                                "style": "1",
+                                                "locale": "en",
+                                                "enable_publishing": false,
+                                                "allow_symbol_change": true,
+                                                "save_image": false,
+                                                "details": true,
+                                                "container_id": "tradingview_48ea6"
+                                            });
+                                        </script>
+                                    </div>
+                                    <!-- TradingView Widget END -->
+                                </div>
+                                <div class="col-lg-3 w-100 mt-2" style="height:350px">
+                                    <!-- TradingView Widget BEGIN -->
+                                    <div class="tradingview-widget-container" style="width: 100%; height: 100%;">
+                                        <iframe allowtransparency="true" frameborder="0"
+                                            src="https://www.tradingview-widget.com/embed-widget/crypto-mkt-screener/?locale=en#%7B%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22defaultColumn%22%3A%22overview%22%2C%22screener_type%22%3A%22crypto_mkt%22%2C%22displayCurrency%22%3A%22USD%22%2C%22colorTheme%22%3A%22light%22%2C%22market%22%3A%22crypto%22%2C%22enableScrolling%22%3Atrue%2C%22utm_source%22%3A%22app.def-trademarket.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22cryptomktscreener%22%2C%22page-uri%22%3A%22app.def-trademarket.com%2Fdashboard%2Findex.php%22%7D"
+                                            title="crypto mkt-screener TradingView widget" lang="en"
+                                            style="user-select: none; box-sizing: border-box; display: block; height: 100%; width: 100%;"></iframe>
+
+                                        <style>
+                                            .tradingview-widget-copyright {
+                                                font-size: 13px !important;
+                                                line-height: 32px !important;
+                                                text-align: center !important;
+                                                vertical-align: middle !important;
+                                                /* @mixin sf-pro-display-font; */
+                                                font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important;
+                                                color: #B2B5BE !important;
+                                            }
+
+                                            .tradingview-widget-copyright .blue-text {
+                                                color: #2962FF !important;
+                                            }
+
+                                            .tradingview-widget-copyright a {
+                                                text-decoration: none !important;
+                                                color: #B2B5BE !important;
+                                            }
+
+                                            .tradingview-widget-copyright a:visited {
+                                                color: #B2B5BE !important;
+                                            }
+
+                                            .tradingview-widget-copyright a:hover .blue-text {
+                                                color: #1E53E5 !important;
+                                            }
+
+                                            .tradingview-widget-copyright a:active .blue-text {
+                                                color: #1848CC !important;
+                                            }
+
+                                            .tradingview-widget-copyright a:visited .blue-text {
+                                                color: #2962FF !important;
+                                            }
+                                        </style>
+                                    </div>
+                                    <!-- TradingView Widget END -->
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-lg-3 col-md-12 col-sm-12 d-none d-lg-block" style="height:150vh">
+                            <div class="row">
+                                <div class="col-md-12 my-2">
+
+                                    <!--Status-->
+
+
+                                    <!--request-->
+
+
+
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="custom-column balance-bg row d-flex">
+                                        <div class="col-2">
+                                            <h6><i class="icon fas fa-balance-scale"></i></h6>
+                                        </div>
+                                        <div class="col-10 text-left">
+                                            <div class="text-left">Total Portfolio</div>
+                                            <div>$0</div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-md-12">
+                                    <div class="custom-column balance-bg row d-flex">
+                                        <div class="col-2">
+                                            <img width="100%" src="./images/64cd7b9fe98ce1691188127.png">
+                                        </div>
+                                        <div class="col-10 text-left wallet-container">
+                                            <div class="text-left">Active BTC Trade Wallet</div>
+
+                                            <div class="wallet-container">
+                                                <span class="bg-success active-dot"></span>
+                                                <small>$0</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="custom-column balance-bg row d-flex">
+                                        <div class="col-2">
+                                            <img width="100%" src="./images/64cd3c3d3896a1691171901.png">
+                                        </div>
+                                        <div class="col-10 text-left wallet-container">
+                                            <div class="text-left">Active ETH Trade Wallet</div>
+
+                                            <div class="wallet-container">
+                                                <span class="bg-success active-dot"></span>
+                                                <small>$0</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="border-color: gray; border-radius: 8px; border-width: 1px;">
+                                    <div class="col-md-12">
+                                        <div class="custom-column withdraw-bg row d-flex">
+                                            <div class="col-2">
+                                                <h6><i class="icon fas fa-money-bill"></i></h6>
+                                            </div>
+                                            <div class="col-10">
+                                                <div>Total Withdraw</div>
+                                                <div>$0 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="custom-column deposit-bg row d-flex">
+                                        <div class="col-2">
+                                            <h6><i class="icon fas fa-coins"></i></h6>
+                                        </div>
+                                        <div class="col-10">
+                                            <div>Total Deposit</div>
+                                            <div>$0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <h6 class="my-3">My Assets</h6>
+                            <div class="col-xl-12 col-lg-12 card ml-2 text-white my-2"
+                                style="margin-left: 6px; box-shadow: 1px 1px 2px 1px #e1d7e1;border-radius: 20px;">
+                                <div class="card-body row"
+                                    style="padding:10px !important; display: flex;justify-content: center;align-items: center;">
+                                    <div class="col-2 text-capitalize text-dark">
+                                        <img width="60%" src="./images/64cd7b9fe98ce1691188127.png" class="t-icon">
+                                        <img width="40%" src="./images/lock.jpeg" class="t-icon">
+                                    </div>
+                                    <div class="col-4 text-capitalize text-dark">
+                                        Bitcoin <br>
+                                        <span class="text-muted text-uppercase">btc</span>
+                                    </div>
+                                    <div class="col-6 text-dark">
+                                        $0<br>
+                                        <!--$0.00 <br>-->
+                                        <span>Total btc Balance</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12 col-lg-12 card ml-2 text-white my-2"
+                                style="margin-left: 6px;box-shadow: 1px 1px 2px 1px #e1d7e1;border-radius: 20px;">
+                                <div class="card-body row"
+                                    style="padding:10px !important; display: flex;justify-content: center;align-items: center;">
+                                    <div class="col-2 text-capitalize text-dark">
+                                        <img width="60%" src="./images/64cd3c3d3896a1691171901.png" class="t-icon">
+                                        <img width="40%" src="./images/lock.jpeg" class="t-icon">
+                                    </div>
+                                    <div class="col-4 text-capitalize text-dark">
+                                        Ethereum <br>
+                                        <span class="text-muted text-uppercase">eth</span>
+                                    </div>
+                                    <div class="col-6 text-dark">
+                                        $0<br>
+                                        <span>Total eth Balance</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="user-account-number">
+                                <!-- <div>
+                                    <h1>
+                                        <i class="bi bi-currency-exchange"></i>
+                                    </h1>
+
+                                </div> -->
+                                <div
+                                    style="background-color:#0093e4;; padding: 30px; border-radius: 8px; text-align: center;">
+
+                                    <p class="caption mb-2 text-center" style="color: white;">
+                                        Hello, <b>Cent Jr</b><br>
+                                        Welcome to aitradelink Investment <br> Trade Crypto with ease
+                                    </p>
+                                    <br>
+                                    <a href="./dashboard-log-my-trade.html"
+                                        style="display: inline-block; width: 100%; padding: 15px; background: white; text-decoration: none; border-radius: 12px; color: #0093e4; font-weight: bold; text-align: center;">
+                                        <i class="ri-hand-coin-fill custom-icon"></i> Start Trading
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 d-none d-lg-block">
+                                <div class="cover" style="top:1050px"></div>
+                                <div class="col-sm-12 mt-2">
+                                    <div class="tradingview-widget-container" style="width: 100%; height: 420px;">
+                                        <iframe scrolling="no" allowtransparency="true" frameborder="0"
+                                            src="https://www.tradingview-widget.com/embed-widget/market-overview/?locale=en#%7B%22colorTheme%22%3A%22light%22%2C%22dateRange%22%3A%2212M%22%2C%22showChart%22%3Atrue%2C%22largeChartUrl%22%3A%22%22%2C%22isTransparent%22%3Atrue%2C%22showSymbolLogo%22%3Atrue%2C%22showFloatingTooltip%22%3Afalse%2C%22width%22%3A%22100%25%22%2C%22height%22%3A420%2C%22plotLineColorGrowing%22%3A%22rgba(41%2C%2098%2C%20255%2C%201)%22%2C%22plotLineColorFalling%22%3A%22rgba(41%2C%2098%2C%20255%2C%201)%22%2C%22gridLineColor%22%3A%22rgba(240%2C%20243%2C%20250%2C%200)%22%2C%22scaleFontColor%22%3A%22rgba(106%2C%20109%2C%20120%2C%201)%22%2C%22belowLineFillColorGrowing%22%3A%22rgba(41%2C%2098%2C%20255%2C%200.12)%22%2C%22belowLineFillColorFalling%22%3A%22rgba(41%2C%2098%2C%20255%2C%200.12)%22%2C%22belowLineFillColorGrowingBottom%22%3A%22rgba(41%2C%2098%2C%20255%2C%200)%22%2C%22belowLineFillColorFallingBottom%22%3A%22rgba(41%2C%2098%2C%20255%2C%200)%22%2C%22symbolActiveColor%22%3A%22rgba(41%2C%2098%2C%20255%2C%200.12)%22%2C%22tabs%22%3A%5B%7B%22title%22%3A%22Indices%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22BITSTAMP%3ABTCUSD%22%2C%22d%22%3A%22Bitcoin%2F%20US%20Dollar%22%7D%2C%7B%22s%22%3A%22BITSTAMP%3AETHUSD%22%2C%22d%22%3A%22Ethereum%2F%20US%20Dollar%22%7D%2C%7B%22s%22%3A%22BITSTAMP%3AXRPUSD%22%2C%22d%22%3A%22XRP%2F%20US%20Dollar%22%7D%5D%2C%22originalTitle%22%3A%22Indices%22%7D%2C%7B%22title%22%3A%22Futures%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22CME_MINI%3AES1!%22%2C%22d%22%3A%22S%26P%20500%22%7D%2C%7B%22s%22%3A%22CME%3A6E1!%22%2C%22d%22%3A%22Euro%22%7D%2C%7B%22s%22%3A%22COMEX%3AGC1!%22%2C%22d%22%3A%22Gold%22%7D%5D%2C%22originalTitle%22%3A%22Futures%22%7D%2C%7B%22title%22%3A%22Bonds%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22CME%3AGE1!%22%2C%22d%22%3A%22Eurodollar%22%7D%2C%7B%22s%22%3A%22CBOT%3AZB1!%22%2C%22d%22%3A%22T-Bond%22%7D%2C%7B%22s%22%3A%22CBOT%3AUB1!%22%2C%22d%22%3A%22Ultra%20T-Bond%22%7D%5D%2C%22originalTitle%22%3A%22Bonds%22%7D%2C%7B%22title%22%3A%22Forex%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22FX%3AEURUSD%22%2C%22d%22%3A%22EUR%20to%20USD%22%7D%2C%7B%22s%22%3A%22FX%3AGBPUSD%22%2C%22d%22%3A%22GBP%20to%20USD%22%7D%2C%7B%22s%22%3A%22FX%3AUSDJPY%22%2C%22d%22%3A%22USD%20to%20JPY%22%7D%5D%2C%22originalTitle%22%3A%22Forex%22%7D%5D%2C%22utm_source%22%3A%22app.def-trademarket.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22market-overview%22%2C%22page-uri%22%3A%22app.def-trademarket.com%2Fdashboard%2Findex.php%22%7D"
+                                            title="market overview TradingView widget" lang="en"
+                                            style="user-select: none; box-sizing: border-box; display: block; height: 100%; width: 100%;"></iframe>
+
+                                        <style>
+                                            .tradingview-widget-copyright {
+                                                font-size: 13px !important;
+                                                line-height: 32px !important;
+                                                text-align: center !important;
+                                                vertical-align: middle !important;
+                                                /* @mixin sf-pro-display-font; */
+                                                font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important;
+                                                color: #B2B5BE !important;
+                                            }
+
+                                            .tradingview-widget-copyright .blue-text {
+                                                color: #2962FF !important;
+                                            }
+
+                                            .tradingview-widget-copyright a {
+                                                text-decoration: none !important;
+                                                color: #B2B5BE !important;
+                                            }
+
+                                            .tradingview-widget-copyright a:visited {
+                                                color: #B2B5BE !important;
+                                            }
+
+                                            .tradingview-widget-copyright a:hover .blue-text {
+                                                color: #1E53E5 !important;
+                                            }
+
+                                            .tradingview-widget-copyright a:active .blue-text {
+                                                color: #1848CC !important;
+                                            }
+
+                                            .tradingview-widget-copyright a:visited .blue-text {
+                                                color: #2962FF !important;
+                                            }
+                                        </style>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="col-xl-4 col-lg-6 col-sm-12 d-block d-sm-none">
+
+                            <div class="col-md-12 my-2">
+
+                                <!--Status-->
+
+                                <!--request-->
+
+
+
+                            </div>
+
+                            <div class="user-account-number" style="height:200px;z-index:99">
+                                <!-- <div>
+                                    <h1>
+                                        <i class="bi bi-currency-exchange"></i>
+                                    </h1>
+
+                                </div> -->
+                                <div
+                                    style="background-color: #0093e4; padding: 30px; border-radius: 8px; text-align: center;">
+                                    <p class="caption mb-2 text-center" style="color: white;">
+                                        Hello, <b>David Cent</b><br>
+                                        Welcome to Aitradelink Investment <br> Trade Crypto with ease
+                                    </p>
+                                    <br>
+                                    <a href="./dashboard-log-my-trade.html" class="caption mb-2"
+                                        style="display: inline-block; width: 100%; padding: 15px; background: white; text-decoration: none; border-radius: 12px; color: #0093e4; font-weight: bold; text-align: center;">
+                                        <i class="ri-hand-coin-fill custom-icon"></i> Start Trading
+                                    </a>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-sm-12 d-sm-none d-block" style="padding-left:0px;">
+                            <div class="cover" style="top:680px"></div>
+                            <!-- TradingView Widget BEGIN -->
+                            <div class="tradingview-widget-container" style="width: 100%; height: 460px;">
+                                <iframe scrolling="no" allowtransparency="true" frameborder="0"
+                                    src="https://www.tradingview-widget.com/embed-widget/market-overview/?locale=en#%7B%22colorTheme%22%3A%22light%22%2C%22dateRange%22%3A%2212M%22%2C%22showChart%22%3Atrue%2C%22largeChartUrl%22%3A%22%22%2C%22isTransparent%22%3Atrue%2C%22showSymbolLogo%22%3Atrue%2C%22showFloatingTooltip%22%3Afalse%2C%22width%22%3A%22100%25%22%2C%22height%22%3A460%2C%22plotLineColorGrowing%22%3A%22rgba(41%2C%2098%2C%20255%2C%201)%22%2C%22plotLineColorFalling%22%3A%22rgba(41%2C%2098%2C%20255%2C%201)%22%2C%22gridLineColor%22%3A%22rgba(240%2C%20243%2C%20250%2C%200)%22%2C%22scaleFontColor%22%3A%22rgba(106%2C%20109%2C%20120%2C%201)%22%2C%22belowLineFillColorGrowing%22%3A%22rgba(41%2C%2098%2C%20255%2C%200.12)%22%2C%22belowLineFillColorFalling%22%3A%22rgba(41%2C%2098%2C%20255%2C%200.12)%22%2C%22belowLineFillColorGrowingBottom%22%3A%22rgba(41%2C%2098%2C%20255%2C%200)%22%2C%22belowLineFillColorFallingBottom%22%3A%22rgba(41%2C%2098%2C%20255%2C%200)%22%2C%22symbolActiveColor%22%3A%22rgba(41%2C%2098%2C%20255%2C%200.12)%22%2C%22tabs%22%3A%5B%7B%22title%22%3A%22Indices%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22BITSTAMP%3ABTCUSD%22%2C%22d%22%3A%22Bitcoin%2F%20US%20Dollar%22%7D%2C%7B%22s%22%3A%22BITSTAMP%3AETHUSD%22%2C%22d%22%3A%22Ethereum%2F%20US%20Dollar%22%7D%2C%7B%22s%22%3A%22BITSTAMP%3AXRPUSD%22%2C%22d%22%3A%22XRP%2F%20US%20Dollar%22%7D%5D%2C%22originalTitle%22%3A%22Indices%22%7D%2C%7B%22title%22%3A%22Futures%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22CME_MINI%3AES1!%22%2C%22d%22%3A%22S%26P%20500%22%7D%2C%7B%22s%22%3A%22CME%3A6E1!%22%2C%22d%22%3A%22Euro%22%7D%2C%7B%22s%22%3A%22COMEX%3AGC1!%22%2C%22d%22%3A%22Gold%22%7D%5D%2C%22originalTitle%22%3A%22Futures%22%7D%2C%7B%22title%22%3A%22Bonds%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22CME%3AGE1!%22%2C%22d%22%3A%22Eurodollar%22%7D%2C%7B%22s%22%3A%22CBOT%3AZB1!%22%2C%22d%22%3A%22T-Bond%22%7D%2C%7B%22s%22%3A%22CBOT%3AUB1!%22%2C%22d%22%3A%22Ultra%20T-Bond%22%7D%5D%2C%22originalTitle%22%3A%22Bonds%22%7D%2C%7B%22title%22%3A%22Forex%22%2C%22symbols%22%3A%5B%7B%22s%22%3A%22FX%3AEURUSD%22%2C%22d%22%3A%22EUR%20to%20USD%22%7D%2C%7B%22s%22%3A%22FX%3AGBPUSD%22%2C%22d%22%3A%22GBP%20to%20USD%22%7D%2C%7B%22s%22%3A%22FX%3AUSDJPY%22%2C%22d%22%3A%22USD%20to%20JPY%22%7D%5D%2C%22originalTitle%22%3A%22Forex%22%7D%5D%2C%22utm_source%22%3A%22app.def-trademarket.com%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22market-overview%22%2C%22page-uri%22%3A%22app.def-trademarket.com%2Fdashboard%2Findex.php%22%7D"
+                                    title="market overview TradingView widget" lang="en"
+                                    style="user-select: none; box-sizing: border-box; display: block; height: 100%; width: 100%;"></iframe>
+
+                                <style>
+                                    .tradingview-widget-copyright {
+                                        font-size: 13px !important;
+                                        line-height: 32px !important;
+                                        text-align: center !important;
+                                        vertical-align: middle !important;
+                                        /* @mixin sf-pro-display-font; */
+                                        font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important;
+                                        color: #B2B5BE !important;
+                                    }
+
+                                    .tradingview-widget-copyright .blue-text {
+                                        color: #2962FF !important;
+                                    }
+
+                                    .tradingview-widget-copyright a {
+                                        text-decoration: none !important;
+                                        color: #B2B5BE !important;
+                                    }
+
+                                    .tradingview-widget-copyright a:visited {
+                                        color: #B2B5BE !important;
+                                    }
+
+                                    .tradingview-widget-copyright a:hover .blue-text {
+                                        color: #1E53E5 !important;
+                                    }
+
+                                    .tradingview-widget-copyright a:active .blue-text {
+                                        color: #1848CC !important;
+                                    }
+
+                                    .tradingview-widget-copyright a:visited .blue-text {
+                                        color: #2962FF !important;
+                                    }
+                                </style>
+                            </div>
+                            <!-- Trading View Widget ENDS-->
+                        </div>
+
+                        <div class="col-sm-12 d-sm-none d-block">
+                            <!-- Withdraw and Deposit Cards -->
+                            <div class="row" style="margin-right: 2px;">
+                                <div class="single-slide col-6">
+                                    <div class="d-box-three text-center">
+                                        <div class="icon">
+                                            <i class="fas fa-money-bill" style="color:#0093e4; font-size: 24px;"></i>
+                                        </div>
+                                        <div class="content">
+                                            <p class="text-small mb-0 text-dark">Total Withdraw</p>
+                                            <h5 class="title text-dark">$0</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="single-slide col-6">
+                                    <div class="d-box-three text-center">
+                                        <div class="icon">
+                                            <i class="fas fa-coins" style="color:#0093e4; font-size: 24px;"></i>
+                                        </div>
+                                        <div class="content">
+                                            <p class="text-small mb-0 text-dark">Total Deposit</p>
+                                            <h5 class="title text-dark">$0</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons (Withdraw, Receive, Trade) -->
+                            <div class="row gy-2 mobile-box-wrapper" style="margin: 2px;">
+                                <div class="col-4">
+                                    <div class="mobile-action-send mobile-box text-center" style="display: block">
+                                        <a href="./dashboard-withdraw.html" class="item-link" style="text-decoration: none;">
+                                            <i class="ri-send-plane-line" style="font-size: 22px; color: #0093e4;"></i>
+                                            <h6 class="title">Withdraw</h6>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="mobile-action-receive mobile-box text-center">
+                                        <a href="./deposit.html" class="item-link" style="text-decoration: none;">
+                                            <i class="ri-download-2-line" style="font-size: 22px; color: #0093e4;"></i>
+                                            <h6 class="title">Receive</h6>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="mobile-action-trade mobile-box text-center">
+                                        <a href="./dashboard-log-my-trade.html" class="item-link" style="text-decoration: none;">
+                                            <i class="ri-coins-fill" style="font-size: 22px; color: #0093e4;"></i>
+                                            <h6 class="title">Trade</h6>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Buy Crypto Buttons -->
+                            <div class="col-12 text-center" style="margin-top: 10px;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a href="./dashboard-p2p-trading.html" class="w-100 btn btn-sm trading-btn"
+                                            style="background-color: #0093e4; color: white; border-radius: 8px;">
+                                            BUY CRYPTO<br>(P2P)
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="./deposit.html" class="w-100 btn btn-sm trading-btn"
+                                            style="background-color: #0093e4; color: white; border-radius: 8px;">
+                                            BUY CRYPTO<br>(Gift Card)
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--mobile card slider end -->
+
+
+                    </div>
+
+
+                    <div class="row d-sm-none d-block" style=" padding-left:5px; ">
+                        <h6 class="my-3">My Assets</h6>
+                        <div class="col-xl-12 col-lg-12 card ml-2 text-white my-2"
+                            style="margin-left: 6px; box-shadow: 1px 1px 2px 1px #e1d7e1;border-radius: 20px;">
+                            <div class="card-body row"
+                                style="padding:10px !important; display: flex;justify-content: center;align-items: center;">
+                                <div class="col-2 text-capitalize text-dark">
+                                    <img width="60%" height="auto" src="./images/64cd7b9fe98ce1691188127.png"
+                                        class="t-icon">
+                                    <img width="40%" height="auto" src="./images/lock.jpeg" class="t-icon">
+                                </div>
+                                <div class="col-4 text-capitalize text-dark">
+                                    Bitcoin <br>
+                                    <span class="text-muted text-uppercase">btc</span>
+                                </div>
+                                <div class="col-6 text-dark">
+                                    $0<br>
+                                    <!--$0.00 <br>-->
+                                    <span>Total btc Balance</span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-12 col-lg-12 card ml-2 text-white my-2"
+                            style="margin-left: 6px; box-shadow: 1px 1px 2px 1px #e1d7e1;border-radius: 20px;">
+                            <div class="card-body row"
+                                style="padding:10px !important; display: flex;justify-content: center;align-items: center;">
+                                <div class="col-2 text-capitalize text-dark">
+                                    <img width="60%" src="./images/64cd3c3d3896a1691171901.png" class="t-icon">
+                                    <img width="40%" src="./images/lock.jpeg" class="t-icon">
+                                </div>
+                                <div class="col-4 text-capitalize text-dark">
+                                    Ethereum <br>
+                                    <span class="text-muted text-uppercase">eth</span>
+                                </div>
+                                <div class="col-6 text-dark">
+                                    $0<br>
+                                    <span>Total eth Balance</span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!--<div class="col-xl-4 col-lg-6 card ml-2 bg-dark text-white my-3" style="margin-left: 6px; box;box-shadow: 1px 1px 2px 1px #f4f0f4;">-->
+                        <!--    <div class="card-body row">-->
+                        <!--  <div class="col-5">Etherium</div>-->
+                        <!--  <div class="col-7">$0.00</div>-->
+                        <!--  <div class="col-5 text-muted">0 eth</div>-->
+                        <!--  <div class="col-7 text-muted">0.00% (US$ 0.00)</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                    </div>
+
+
+
+
+
+                </div>
+
+
+                <div class="modal fade" id="planDelete" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <form action="" method="post">
+                            <input type="hidden" name="_token" value="9uDk52mEjkGS5MbvLjwyEmAjhYxiJui7A8kreu2S">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete Plan</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Delete</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+    <style>
+        .tradingview-widget-copyright {
+            font-size: 13px !important;
+            line-height: 32px !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif !important;
+            color: #B2B5BE !important;
+        }
+
+        .tradingview-widget-copyright .blue-text {
+            color: #2962FF !important;
+        }
+
+        .tradingview-widget-copyright a {
+            text-decoration: none !important;
+            color: #B2B5BE !important;
+        }
+
+        .tradingview-widget-copyright a:visited {
+            color: #B2B5BE !important;
+        }
+
+        .tradingview-widget-copyright a:hover .blue-text {
+            color: #1E53E5 !important;
+        }
+
+        .tradingview-widget-copyright a:active .blue-text {
+            color: #1848CC !important;
+        }
+
+        .tradingview-widget-copyright a:visited .blue-text {
+            color: #2962FF !important;
+        }
+    </style>
+
+
+    <script src="./scripts/jquery.min.js"></script>
+    <script src="./scripts/purecounter.js"></script>
+    <script src="./scripts/bootstrap.bundle.min.js"></script>
+
+    <script src="./scripts/feather.min.js"></script>
+
+    <script src="./scripts/slick.min.js"></script>
+
+    <script src="./scripts/glightbox.min.js"></script>
+    <script src="./scripts/validate.js"></script>
+    <script src="./scripts/selectric.min.js"></script>
+
+    <script src="./scripts/iziToast.min.js"></script>
+    <script src="./scripts/jquery.uploadPreview.min.js"></script>
+    <script src="./scripts/user_dashboard.js"></script>
+
+
+</body>
+
+</html>
